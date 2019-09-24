@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+GNUPATH="$1"
+
+error () { echo "$@"; exit 1; }
+[[ -n "$GNUPATH" ]] || error "Usage: link-gnu GNUPATH"
+
+BREW_PREFIX="$(brew --prefix 2>/dev/null)"
+if [[ -d "$BREW_PREFIX" ]]; then
+    rm -rf "$GNUPATH.new"
+
+    mkdir -p "$GNUPATH.new/bin"
+    for GNUBIN in \
+        $(find "$BREW_PREFIX" -type d -name gnubin) \
+        "$BREW_PREFIX/opt/gettext/bin" \
+    ; do
+        for BIN in $GNUBIN/*; do
+            ln -sf "$BIN" $GNUPATH.new/bin/.
+        done
+    done
+
+    for GNUMAN in \
+        $(find "$BREW_PREFIX" -type d -name gnuman) \
+        "$BREW_PREFIX/opt/gettext/share/man" \
+    ; do
+        for SECTION in $GNUMAN/*; do
+            mkdir -p "$GNUPATH.new/man/$(basename $SECTION)"
+            for PAGE in $SECTION/*; do
+                ln -sf "$PAGE" "$GNUPATH.new/man/$(basename $SECTION)/."
+            done
+        done
+    done
+
+    rm -rf "$GNUPATH.old"
+    [[ -d "$GNUPATH" ]] && mv "$GNUPATH" "$GNUPATH.old"
+    hash -r
+    echo "Installing new $GNUPATH"
+    mv "$GNUPATH.new" "$GNUPATH"
+fi
+
+##    LIB_PACKAGES="gettext openssl libxml2 libpcap zlib sqlite"
+##    for i in $LIB_PACKAGES; do
+##        LDFLAGS="-L$BREW_PREFIX/opt/$i/lib $LDFLAGS"
+##        CPPFLAGS="-I$BREW_PREFIX/opt/$i/include $CPPFLAGS"
+##        ## TODO: consider supporting pkgconfig, but check syntax
+##        ## PKG_CONFIG_PATH=$PKG_CONFIG_PATH:$BREW_PREFIX/opt/$i/lib/pkgconfig
+##    done
+##    unset LIB_PACKAGES
+##    export LDFLAGS CPPFLAGS
+
+
+### start from default OS X manpath sources
+##MANPATH=$(man --path)
+##MANPATH=$BREW_PREFIX/share/man:$MANPATH
+##
+##for i in $BIN_PACKAGES; do
+##    MANPATH=$BREW_PREFIX/opt/$i/libexec/gnuman:$MANPATH
+##done
+##
+##MANPATH=$BREW_PREFIX/opt/gettext/share/man:$MANPATH
+##export MANPATH
+##

@@ -1,0 +1,6 @@
+
+```
+bash -c "`curl -sL get.freshshell.com`"
+ln -s ~/.dotfiles/freshrc ~/.freshrc
+fresh
+```

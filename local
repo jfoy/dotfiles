@@ -1,0 +1,75 @@
+
+PATH="$HOME/vendor/gnu/bin:$PATH"
+MANPATH="${MANPATH:-$(man --path)}"
+
+[[ 'Darwin' == "$(uname)" ]] && JAVA_HOME="$(/usr/libexec/java_home)/bin"
+[[ -n "$JAVA_HOME" ]] && [[ -d "$JAVA_HOME/bin" ]] && PATH="$JAVA_HOME/bin:$PATH"
+[[ -n "$JAVA_HOME" ]] && [[ -d "$JAVA_HOME/man" ]] && MANPATH="$JAVA_HOME/man:$MANPATH"
+
+PATH="$(GOROOT= GOPATH=$HOME/.go go env GOPATH)/bin:$PATH"
+PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
+
+###### Perl
+type plenv &>/dev/null && eval "$(plenv init -)" \
+    && eval "$(perl -I$HOME/perl5/lib/perl5 -Mlocal::lib=$HOME/perl5)"
+
+###### Python
+type pyenv &>/dev/null && eval "$(pyenv init - ; pyenv virtualenv-init -)" \
+    && export PIPENV_PYTHON="$(pyenv root)/shims/python"
+
+###### Golang
+# type goenv &>/dev/null && eval "$(goenv init -)"
+
+###### Ruby
+type rbenv &>/dev/null && eval "$(rbenv init -)"
+
+###### Conscript
+export CONSCRIPT_HOME="$HOME/.conscript"
+export CONSCRIPT_OPTS="-XX:MaxPermSize=512M -Dfile.encoding=UTF-8"
+PATH=$CONSCRIPT_HOME/bin:$PATH
+
+export PATH MANPATH
+
+export EDITOR=$(which vim)
+export VISUAL="$EDITOR"
+
+###### git and GitHub
+export GITHUB_USER="$USER"
+type hub &>/dev/null && eval "$(hub alias -s)"
+
+if type git &>/dev/null; then
+    export DEBFULLNAME="$(git config --global --get user.name)"
+    export DEBEMAIL="$(git config --global --get user.email)"
+fi
+
+##### Minikube and docker
+type minikube &>/dev/null && minikube status &>/dev/null && eval $(minikube docker-env)
+
+##### Local shell setup
+if [[ -n "$PS1" ]]; then    # Interactive shell
+    type format-prompt &>/dev/null && PS1=$(format-prompt)
+    alias rot13="tr '[A-Za-z]' '[N-ZA-Mn-za-m]'"
+    alias nullsplit="tr '\000' '\n'"
+
+    # Mac shell setup
+    if [[ 'Darwin' == "$(uname)" ]]; then
+        alias flush_dns='sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder'
+        # alias flush_dns='sudo discoveryutil mdnsflushcache; sudo discoveryutil udnsflushcaches'
+        alias finder_show_hidden_files='defaults write com.apple.finder AppleShowAllFiles TRUE  && killall Finder'
+        alias finder_hide_hidden_files='defaults write com.apple.finder AppleShowAllFiles FALSE && killall Finder'
+        alias unquarantine='xattr -d com.apple.quarantine'
+    fi
+fi
+
+# Translate an Amazon region name to its short form, e.g. us-east-2 to use2.
+short_region() {
+  local long_region="$1"
+  echo "$long_region" \
+    | sed -e 's/-//g' \
+    | sed -e 's/north/n/' \
+    | sed -e 's/east/e/' \
+    | sed -e 's/south/s/' \
+    | sed -e 's/west/w/' \
+    | sed -e 's/central/c/' \
+    | sed -e 's/gov/g/'
+}

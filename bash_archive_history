@@ -1,0 +1,10 @@
+# "Eternal" bash history, as documented in https://twitter.com/michaelhoffman/status/639178145673932800
+# originally: HISTFILE="${HOME}/.history/$(date -u +%Y/%m/%d.%H.%M.%S)_${HOSTNAME_SHORT}_$$"
+
+HISTORY_MONTH_PREFIX="${HOME}/.history/$(date -u +%Y/%m)"
+test -d $HISTORY_MONTH_PREFIX || mkdir -p $HISTORY_MONTH_PREFIX
+HIST_ARCHIVE_FILE="${HISTORY_MONTH_PREFIX}/$(date -u +%d.%H.%M.%S)_$(hostname -s)_$$"
+
+# Note: by saving to a separate archive file instead of changing $HISTFILE,
+# the shell's default cross-session history behavior continues to work.
+history -a $HIST_ARCHIVE_FILE

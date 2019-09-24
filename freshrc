@@ -1,0 +1,76 @@
+# freshshell.com
+#
+# Examples:
+#
+#   fresh twe4ked/dotfiles shell/functions/\*
+#   fresh jasoncodes/dotfiles shell/aliases/rails.sh
+#   fresh jasoncodes/dotfiles config/tmux.conf --file
+#
+# See http://freshshell.com/readme for documentation.
+#
+
+# Update fresh itself
+fresh freshshell/fresh bin/fresh --bin
+fresh freshshell/fresh contrib/completion/fresh-completion.bash
+
+$FRESH_LOCAL/bin/installer/link-gnu "$HOME/vendor/gnu"
+
+fresh homebrew
+fresh local
+
+fresh-options --file
+    fresh Brewfile
+    fresh ackrc
+    fresh bash_archive_history
+    fresh bash_logout
+    fresh bashrc
+    fresh ideavimrc
+    fresh jq
+    fresh muttrc
+    fresh profile
+    fresh tmux.conf
+    fresh vimrc
+fresh-options
+
+fresh bin/format-prompt --bin
+
+fresh seebi/tmux-colors-solarized tmuxcolors-dark.conf --file=~/.tmux/tmuxcolors-dark.conf
+fresh seebi/tmux-colors-solarized tmuxcolors-light.conf --file=~/.tmux/tmuxcolors-light.conf
+
+# enable dircolors and use ~/.dircolors if available
+fresh seebi/dircolors-solarized dircolors.ansi-universal --file=~/.dircolors
+if ls --version | grep "GNU coreutils" &> /dev/null; then
+  fresh foobacca/dotfiles bash/dircolors
+fi
+fresh altercation/solarized mutt-colors-solarized/mutt-colors-solarized-dark-16.muttrc \
+    --file=~/.mutt/mutt-colors-solarized/mutt-colors-solarized-dark-16.muttrc
+
+# Mac shell setup
+if [[ "Darwin" == "$(uname)" ]]; then
+    LOGIN_PLIST=~/Library/LaunchAgents/com.${USER}.osx-init.plist
+    fresh bin/osx-init --bin
+    fresh bin/wakeup --bin=~/.wakeup
+    fresh osx-init.plist --file=$LOGIN_PLIST
+    # launchctl load $LOGIN_PLIST
+    unset LOGIN_PLIST
+fi
+
+fresh tpope/vim-pathogen                     . --file=~/.vim/bundle/vim-pathogen/
+fresh MarcWeber/vim-addon-local-vimrc        . --file=~/.vim/bundle/vim-addon-local-vimrc/
+fresh altercation/vim-colors-solarized       . --file=~/.vim/bundle/vim-colors-solarized/
+fresh kien/ctrlp.vim                         . --file=~/.vim/bundle/ctrlp.vim/
+
+# fresh scrooloose/syntastic                   . --file=~/.vim/bundle/syntastic/
+# fresh scrooloose/nerdtree                    . --file=~/.vim/bundle/nerdtree/
+# fresh vim-scripts/matchit.zip                . --file=~/.vim/bundle/matchit/
+# fresh tpope/vim-fugitive                     . --file=~/.vim/bundle/vim-fugitive/
+# fresh vim-ruby/vim-ruby                      . --file=~/.vim/bundle/vim-ruby/
+# fresh derekwyatt/vim-scala                   . --file=~/.vim/bundle/vim-scala/
+# fresh tpope/vim-leiningen                    . --file=~/.vim/bundle/vim-leiningen/
+# fresh tpope/vim-projectionist                . --file=~/.vim/bundle/vim-projectionist/
+# fresh tpope/vim-dispatch                     . --file=~/.vim/bundle/vim-dispatch/
+# fresh tpope/vim-fireplace                    . --file=~/.vim/bundle/vim-fireplace/
+# fresh fatih/vim-go                           . --file=~/.vim/bundle/vim-go/
+# fresh rjohnsondev/vim-compiler-go            . --file=~/.vim/bundle/vim-compiler-go/
+# fresh majutsushi/tagbar                      . --file=~/.vim/bundle/tagbar/
+# fresh avakhov/vim-yaml                       . --file=~/.vim/bundle/vim-yaml/

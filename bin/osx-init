@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+## Commands to be executed at Mac OS X user login, not individual login shell startup
+:
+

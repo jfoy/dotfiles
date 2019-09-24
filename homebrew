@@ -1,0 +1,24 @@
+
+BREW_PREFIX=$(brew --prefix)
+PATH="$BREW_PREFIX/bin:$BREW_PREFIX/sbin:$PATH"
+
+##    LIB_PACKAGES="gettext openssl libxml2 libpcap zlib sqlite"
+##    for i in $LIB_PACKAGES; do
+##        LDFLAGS="-L$BREW_PREFIX/opt/$i/lib $LDFLAGS"
+##        CPPFLAGS="-I$BREW_PREFIX/opt/$i/include $CPPFLAGS"
+##        ## TODO: consider supporting pkgconfig, but check syntax
+##        ## PKG_CONFIG_PATH=$PKG_CONFIG_PATH:$BREW_PREFIX/opt/$i/lib/pkgconfig
+##    done
+##    unset LIB_PACKAGES
+##    export LDFLAGS CPPFLAGS
+
+if [[ -n "$PS1" ]]; then
+    # interactive shells only -- loading this is slow
+    if ! declare -f _command &>/dev/null; then
+        PATH_TO_BASH_COMPLETION="$BREW_PREFIX/etc/bash_completion"
+        [[ -f "$PATH_TO_BASH_COMPLETION" ]] && source "$PATH_TO_BASH_COMPLETION"
+        unset PATH_TO_BASH_COMPLETION
+    fi
+fi
+
+unset BREW_PREFIX
